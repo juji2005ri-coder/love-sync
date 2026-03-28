@@ -246,9 +246,9 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
       // Trigger animations based on score
       if (result.score >= 90) {
         // Perfect/Great: Massive celebration
-        const duration = 3 * 1000;
+        const duration = 2 * 1000;
         const animationEnd = Date.now() + duration;
-        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+        const defaults = { startVelocity: 25, spread: 360, ticks: 50, zIndex: 0 };
 
         const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
@@ -259,25 +259,24 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
             return clearInterval(interval);
           }
 
-          const particleCount = 50 * (timeLeft / duration);
-          // since particles fall down, start a bit higher than random
+          const particleCount = 30 * (timeLeft / duration);
           confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
           confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
-        }, 250);
+        }, 300);
       } else if (result.score >= 70) {
-        // Good: Heart-shaped confetti or simple burst
+        // Good: Heart-colored simple burst
         confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.7 },
           colors: ['#ff5fa9', '#ff9fcf', '#ffffff']
         });
       } else if (result.score >= 50) {
-        // Fair: Small burst
+        // Fair: Small subtle burst
         confetti({
-          particleCount: 40,
-          spread: 50,
-          origin: { y: 0.7 },
+          particleCount: 15,
+          spread: 40,
+          origin: { y: 0.8 },
           colors: ['#ff5fa9', '#6fd3ff']
         });
       }
