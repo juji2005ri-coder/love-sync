@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, animate } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Heart, Sparkles, RotateCcw, Users, Copy, Check } from "lucide-react";
+import confetti from "canvas-confetti";
 
 import HeartCanvas, { type NormalizedPoint } from "@/components/HeartCanvas";
 import HeartComparisonCanvas from "@/components/HeartComparisonCanvas";
@@ -241,6 +242,45 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
   useEffect(() => {
     if (result) {
       setDisplayScore(result.score);
+      
+      // Trigger animations based on score
+      if (result.score >= 90) {
+        // Perfect/Great: Massive celebration
+        const duration = 3 * 1000;
+        const animationEnd = Date.now() + duration;
+        const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+        const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
+
+        const interval: any = setInterval(function() {
+          const timeLeft = animationEnd - Date.now();
+
+          if (timeLeft <= 0) {
+            return clearInterval(interval);
+          }
+
+          const particleCount = 50 * (timeLeft / duration);
+          // since particles fall down, start a bit higher than random
+          confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+          confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+        }, 250);
+      } else if (result.score >= 70) {
+        // Good: Heart-shaped confetti or simple burst
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#ff5fa9', '#ff9fcf', '#ffffff']
+        });
+      } else if (result.score >= 50) {
+        // Fair: Small burst
+        confetti({
+          particleCount: 40,
+          spread: 50,
+          origin: { y: 0.7 },
+          colors: ['#ff5fa9', '#6fd3ff']
+        });
+      }
     } else {
       setDisplayScore(0);
     }
@@ -500,13 +540,29 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
             {status === "done" && result ? (
               <motion.div
                 key="result"
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.25 }}
-                className="bg-white/70 border border-rose-100 rounded-3xl p-5 sm:p-7 backdrop-blur shadow-sm"
+                initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
+                className="bg-white/70 border border-rose-100 rounded-3xl p-5 sm:p-7 backdrop-blur shadow-sm relative overflow-hidden"
               >
-                <div className="flex items-start justify-between gap-4">
+                {/* Dynamic background glow for high scores */}
+                {displayScore >= 70 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.4 }}
+                    className="absolute -top-24 -right-24 w-64 h-64 bg-pink-300 blur-[80px] rounded-full pointer-events-none"
+                  />
+                )}
+                {displayScore >= 90 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.3 }}
+                    className="absolute -bottom-24 -left-24 w-64 h-64 bg-purple-300 blur-[80px] rounded-full pointer-events-none"
+                  />
+                )}
+
+                <div className="flex items-start justify-between gap-4 relative z-10">
                   <div>
                     <div className="text-sm font-semibold text-rose-800">Sync Result</div>
                     <div className="text-xs text-rose-600 mt-1">Size and position are ignored. We score shape similarity.</div>
@@ -517,7 +573,7 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                         type="button"
                         onClick={handleResetRoom}
                         disabled={isWriting}
-                        className="h-10 px-3 rounded-2xl bg-white/70 border border-rose-200 text-rose-800 font-semibold hover:bg-white flex items-center gap-2"
+                        className="h-10 px-3 rounded-2xl bg-white/70 border border-rose-200 text-rose-800 font-semibold hover:bg-white flex items-center gap-2 transition-all active:scale-95"
                       >
                         <RotateCcw className="w-4 h-4" />
                         Start over
@@ -526,40 +582,69 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                   </div>
                 </div>
 
-                <div className="mt-6 grid grid-cols-1 md:grid-cols-5 gap-5">
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-5 gap-5 relative z-10">
                   <div className="md:col-span-2">
-                    <div className="rounded-3xl bg-gradient-to-b from-pink-50 to-white border border-rose-100 p-5">
+                    <motion.div 
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="rounded-3xl bg-gradient-to-b from-pink-50 to-white border border-rose-100 p-5 shadow-inner"
+                    >
                       <div className="text-sm font-semibold text-rose-800 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4" />
+                        <Sparkles className={`w-4 h-4 ${displayScore >= 70 ? "text-amber-400 animate-pulse" : "text-rose-400"}`} />
                         Destined Sync Score
                       </div>
                       <div className="mt-3 flex items-baseline gap-2">
-                        <div className="text-5xl font-black tracking-tight text-rose-900">{displayScore}</div>
-                        <div className="text-lg font-bold text-rose-800">%</div>
+                        <motion.div 
+                          initial={{ scale: 0.5, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ 
+                            type: "spring", 
+                            stiffness: 260, 
+                            damping: 20,
+                            delay: 0.3 
+                          }}
+                          className="text-6xl font-black tracking-tight text-rose-900 drop-shadow-sm"
+                        >
+                          {displayScore}
+                        </motion.div>
+                        <div className="text-xl font-bold text-rose-800">%</div>
                       </div>
-                      <div className="mt-3 text-rose-900 font-black text-lg leading-snug">
-                        {/* reuse the same message logic in LoveSyncApp by recomputing with score thresholds */}
+                      <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.6 }}
+                        className="mt-4 text-rose-900 font-black text-xl leading-snug"
+                      >
                         {(() => {
                           const s = result.score;
-                          if (s >= 92) return "Destined couple! Almost perfect sync";
-                          if (s >= 80) return "Destined couple! Let's deepen the connection";
-                          if (s >= 65) return "Share more love";
-                          if (s >= 45) return "One more step. You're getting closer";
-                          if (s >= 25) return "Just started. Try a little more magic";
-                          return "Sync experiment start! Draw with lots of love today";
+                          if (s >= 95) return "True Soulmates! 💖 Your hearts are one.";
+                          if (s >= 85) return "Perfect Match! ✨ Almost identical sync.";
+                          if (s >= 70) return "Destined Couple! 💕 Deep connection found.";
+                          if (s >= 50) return "Great Harmony! 🌸 A beautiful match.";
+                          if (s >= 30) return "Warm Connection 💝 Good start together.";
+                          return "Sync Experiment Start! 🍬 Draw with more love.";
                         })()}
+                      </motion.div>
+                      <div className="mt-5 text-xs text-rose-500 font-medium italic">
+                        {displayScore >= 90 ? "You two are legendary!" : "Getting 100 points is intentionally a bit hard."}
                       </div>
-                      <div className="mt-4 text-sm text-rose-700">Getting 100 points is intentionally a bit hard.</div>
-                    </div>
+                    </motion.div>
                   </div>
 
                   <div className="md:col-span-3">
-                    <HeartComparisonCanvas
-                      preparedA={result.preparedA}
-                      preparedB={result.preparedB}
-                      alignment={result.alignment}
-                      score={result.score}
-                    />
+                    <motion.div
+                      initial={{ x: 20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <HeartComparisonCanvas
+                        preparedA={result.preparedA}
+                        preparedB={result.preparedB}
+                        alignment={result.alignment}
+                        score={result.score}
+                      />
+                    </motion.div>
                   </div>
                 </div>
               </motion.div>
