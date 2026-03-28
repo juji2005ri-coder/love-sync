@@ -288,11 +288,18 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
 
   const handleCommit1 = async (pts: NormalizedPoint[]) => {
     if (supabaseConfigMissingReason) return;
-    if (role !== "one") return;
-    if (status !== "waiting_for_1") return;
+    if (role !== "one") {
+      addLog("Cannot commit: You are not Player 1.");
+      return;
+    }
+    if (status !== "waiting_for_1") {
+      addLog(`Cannot commit: Current status is ${status}.`);
+      return;
+    }
     setIsWriting(true);
     addLog("Committing first heart...");
     try {
+      // Use conditional update for safety (status must be waiting_for_1)
       const { error } = await supabase
         .from("rooms")
         .update({
@@ -300,13 +307,20 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
           status: "waiting_for_2",
           updated_at: new Date().toISOString(),
         })
-        .eq("id", roomId);
+        .eq("id", roomId)
+        .eq("status", "waiting_for_1");
+
       if (error) {
-        addLog(`Error committing 1: [${error.code}] ${error.message}. ${error.details || ""}`);
+        addLog(`Error committing 1: [${error.code}] ${error.message}`);
         console.error("Full commit error:", error);
+        // On error, let the user try again
       } else {
-        addLog("First heart committed successfully.");
+        addLog("First heart committed successfully. Syncing...");
+        // Important: Immediately refetch to update local state and 'status'
+        await fetchInitial();
       }
+    } catch (err: any) {
+      addLog(`Unexpected error: ${err?.message || "unknown"}`);
     } finally {
       setIsWriting(false);
     }
@@ -314,11 +328,18 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
 
   const handleCommit2 = async (pts: NormalizedPoint[]) => {
     if (supabaseConfigMissingReason) return;
-    if (role !== "two") return;
-    if (status !== "waiting_for_2") return;
+    if (role !== "two") {
+      addLog("Cannot commit: You are not Player 2.");
+      return;
+    }
+    if (status !== "waiting_for_2") {
+      addLog(`Cannot commit: Current status is ${status}.`);
+      return;
+    }
     setIsWriting(true);
     addLog("Committing second heart...");
     try {
+      // Use conditional update for safety (status must be waiting_for_2)
       const { error } = await supabase
         .from("rooms")
         .update({
@@ -326,7 +347,9 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
           status: "done",
           updated_at: new Date().toISOString(),
         })
-        .eq("id", roomId);
+        .eq("id", roomId)
+        .eq("status", "waiting_for_2");
+
       if (error) {
         addLog(`Error committing 2: [${error.code}] ${error.message}`);
       } else {
@@ -334,6 +357,8 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
         // Immediate refetch to ensure local state is updated instantly
         await fetchInitial();
       }
+    } catch (err: any) {
+      addLog(`Unexpected error: ${err?.message || "unknown"}`);
     } finally {
       setIsWriting(false);
     }
