@@ -2,9 +2,12 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 
+import { translations, type Locale } from "@/lib/i18n";
+
 export type NormalizedPoint = { x: number; y: number };
 
 type HeartCanvasProps = {
+  locale?: Locale;
   title?: string;
   subtitle?: string;
   strokeColor?: string;
@@ -26,6 +29,7 @@ function toCanvasNormalizedPoint(
 }
 
 export default function HeartCanvas({
+  locale = "en",
   title,
   subtitle,
   strokeColor = "#ff6fb1",
@@ -34,6 +38,7 @@ export default function HeartCanvas({
   onClear,
   disabled,
 }: HeartCanvasProps) {
+  const t = translations[locale];
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [isDrawing, setIsDrawing] = useState(false);
@@ -122,7 +127,7 @@ export default function HeartCanvas({
   const commit = () => {
     const pts = pointsRef.current;
     if (pts.length < 18) {
-      setHint("Draw a bit more, then press Confirm.");
+      setHint(t.tooShortHint);
       window.setTimeout(() => setHint(null), 1700);
       return;
     }
@@ -238,10 +243,10 @@ export default function HeartCanvas({
 
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
           <div className="text-xs font-medium text-rose-700 bg-white/70 px-3 py-1 rounded-full border border-rose-200">
-            Draw with your finger or mouse
+            {t.drawWithMouse}
           </div>
           <div className="text-xs text-rose-600 bg-white/70 px-3 py-1 rounded-full border border-rose-200">
-            {isDrawing ? "Drawing..." : "Ready!"}
+            {isDrawing ? t.drawingState : t.readyState}
           </div>
         </div>
       </div>
@@ -253,7 +258,7 @@ export default function HeartCanvas({
           disabled={disabled}
           className="flex-1 h-11 rounded-2xl bg-white/80 border border-rose-200 text-rose-800 font-semibold hover:bg-white disabled:opacity-50"
         >
-          Redraw
+          {t.redraw}
         </button>
         <button
           type="button"
@@ -261,7 +266,7 @@ export default function HeartCanvas({
           disabled={disabled}
           className="flex-1 h-11 rounded-2xl bg-gradient-to-r from-pink-400 to-rose-500 text-white font-semibold shadow-lg hover:brightness-105 disabled:opacity-50"
         >
-          Confirm
+          {t.confirm}
         </button>
       </div>
 
