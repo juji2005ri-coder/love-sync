@@ -3,27 +3,26 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, animate } from "framer-motion";
 import { Heart, Sparkles, Users, RotateCcw } from "lucide-react";
+
 import HeartCanvas, { type NormalizedPoint } from "@/components/HeartCanvas";
 import HeartComparisonCanvas from "@/components/HeartComparisonCanvas";
 import { heartSimilarity, type SimilarityResult } from "@/lib/heartSimilarity";
+import { translations, type Locale } from "@/lib/i18n";
 
 type View = "draw1" | "between12" | "draw2" | "result";
 
-function scoreMessage(score: number) {
-  if (score >= 92) return "Destined couple! Almost perfect sync";
-  if (score >= 80) return "Destined couple! Let's deepen the connection";
-  if (score >= 65) return "Share more love";
-  if (score >= 45) return "One more step. You're getting closer";
-  if (score >= 25) return "Just started. Try a little more magic";
-  return "Sync experiment start! Draw with lots of love today";
+function scoreMessage(score: number, locale: Locale) {
+  return translations[locale].resultMessage(score);
 }
 
-export default function LoveSyncApp() {
+export default function LoveSyncApp({ locale }: { locale: Locale }) {
   const [view, setView] = useState<View>("draw1");
   const [points1, setPoints1] = useState<NormalizedPoint[] | null>(null);
   const [result, setResult] = useState<SimilarityResult | null>(null);
   const [isComputing, setIsComputing] = useState(false);
   const [displayScore, setDisplayScore] = useState(0);
+
+  const t = translations[locale];
 
   const restart = () => {
     setView("draw1");
@@ -48,8 +47,6 @@ export default function LoveSyncApp() {
       },
     });
 
-    // Even if the environment is slow and the animation is delayed,
-    // make sure we still reach the final value.
     const timeoutId = window.setTimeout(() => {
       if (finished) return;
       controls.stop();
@@ -61,7 +58,6 @@ export default function LoveSyncApp() {
       controls.stop();
       window.clearTimeout(timeoutId);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result]);
 
   const handleCommit1 = (pts: NormalizedPoint[]) => {
@@ -72,8 +68,8 @@ export default function LoveSyncApp() {
 
   useEffect(() => {
     if (view !== "between12") return;
-    const t = window.setTimeout(() => setView("draw2"), 900);
-    return () => window.clearTimeout(t);
+    const timer = window.setTimeout(() => setView("draw2"), 900);
+    return () => window.clearTimeout(timer);
   }, [view]);
 
   const handleCommit2 = async (pts: NormalizedPoint[]) => {
@@ -86,7 +82,7 @@ export default function LoveSyncApp() {
     setView("result");
   };
 
-  const message = useMemo(() => (result ? scoreMessage(result.score) : ""), [result]);
+  const message = useMemo(() => (result ? scoreMessage(result.score, locale) : ""), [result, locale]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 via-rose-50 to-purple-50">
@@ -96,12 +92,10 @@ export default function LoveSyncApp() {
             <Heart className="w-6 h-6 text-rose-500" />
           </div>
           <div>
-            <div className="text-2xl font-black tracking-tight text-rose-900">
-              Love Sync Score
-            </div>
+            <div className="text-2xl font-black tracking-tight text-rose-900">{t.title}</div>
             <div className="text-sm text-rose-700 flex items-center gap-2">
               <Users className="w-4 h-4" />
-              Local two-player (Mock)
+              {t.localTwoPlayer}
             </div>
           </div>
         </header>
@@ -119,25 +113,24 @@ export default function LoveSyncApp() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="text-sm font-semibold text-rose-800">1st: Your Heart</div>
-                    <div className="text-xs text-rose-600 mt-1">
-                      Take your time. The closer the shape, the higher the score.
-                    </div>
+                    <div className="text-sm font-semibold text-rose-800">{t.firstHeartTitle}</div>
+                    <div className="text-xs text-rose-600 mt-1">{t.firstHeartDescription}</div>
                   </div>
                   <div className="hidden sm:flex items-center gap-2 text-rose-700 bg-white/70 border border-rose-200 rounded-2xl px-3 py-2">
                     <Sparkles className="w-4 h-4" />
-                    <span className="text-xs font-semibold">Let&apos;s go</span>
+                    <span className="text-xs font-semibold">{t.letsGo}</span>
                   </div>
                 </div>
 
                 <div className="mt-5">
                   <HeartCanvas
                     key="canvas1"
+                    locale={locale}
                     strokeColor="#ff5fa9"
                     strokeWidth={11}
                     onCommit={handleCommit1}
-                    title="Drawing Canvas"
-                    subtitle="Press Confirm to continue"
+                    title={t.drawingCanvas}
+                    subtitle={t.pressConfirmToContinue}
                   />
                 </div>
               </motion.div>
@@ -160,12 +153,8 @@ export default function LoveSyncApp() {
                   >
                     <Heart className="w-8 h-8 text-white" />
                   </motion.div>
-                  <div className="text-lg font-black text-rose-900">
-                    It&apos;s your partner&apos;s turn
-                  </div>
-                  <div className="text-sm text-rose-700">
-                    Use this moment as a signal and draw with the same feeling.
-                  </div>
+                  <div className="text-lg font-black text-rose-900">{t.partnerTurn}</div>
+                  <div className="text-sm text-rose-700">{t.partnerTurnDescription}</div>
                   <div className="w-full max-w-sm h-2 bg-rose-100 rounded-full overflow-hidden">
                     <motion.div
                       className="h-full bg-gradient-to-r from-pink-400 to-rose-500"
@@ -189,27 +178,24 @@ export default function LoveSyncApp() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="text-sm font-semibold text-sky-800">
-                      2nd: Partner&apos;s Heart
-                    </div>
-                    <div className="text-xs text-sky-600 mt-1">
-                      Sync gets higher as you match the shape (position offsets are fine).
-                    </div>
+                    <div className="text-sm font-semibold text-sky-800">{t.secondHeartTitle}</div>
+                    <div className="text-xs text-sky-600 mt-1">{t.secondHeartDescription}</div>
                   </div>
                   <div className="hidden sm:flex items-center gap-2 text-sky-700 bg-white/70 border border-sky-200 rounded-2xl px-3 py-2">
                     <Sparkles className="w-4 h-4" />
-                    <span className="text-xs font-semibold">Confirm when ready</span>
+                    <span className="text-xs font-semibold">{t.confirmReady}</span>
                   </div>
                 </div>
 
                 <div className="mt-5">
                   <HeartCanvas
                     key="canvas2"
+                    locale={locale}
                     strokeColor="#6fd3ff"
                     strokeWidth={11}
                     onCommit={handleCommit2}
-                    title="Drawing Canvas"
-                    subtitle={isComputing ? "Calculating..." : "Press Confirm to get the sync score"}
+                    title={t.drawingCanvas}
+                    subtitle={isComputing ? t.saving : t.pressConfirmToScore}
                     disabled={isComputing}
                   />
                 </div>
@@ -227,10 +213,8 @@ export default function LoveSyncApp() {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <div className="text-sm font-semibold text-rose-800">Sync Result</div>
-                    <div className="text-xs text-rose-600 mt-1">
-                      We ignore size and position differences and score how similar the shapes are.
-                    </div>
+                    <div className="text-sm font-semibold text-rose-800">{t.syncResultTitle}</div>
+                    <div className="text-xs text-rose-600 mt-1">{t.syncResultDescription}</div>
                   </div>
                   <button
                     type="button"
@@ -238,7 +222,7 @@ export default function LoveSyncApp() {
                     className="h-10 px-3 rounded-2xl bg-white/70 border border-rose-200 text-rose-800 font-semibold hover:bg-white flex items-center gap-2"
                   >
                     <RotateCcw className="w-4 h-4" />
-                    Start over
+                    {t.startOver}
                   </button>
                 </div>
 
@@ -247,7 +231,7 @@ export default function LoveSyncApp() {
                     <div className="rounded-3xl bg-gradient-to-b from-pink-50 to-white border border-rose-100 p-5">
                       <div className="text-sm font-semibold text-rose-800 flex items-center gap-2">
                         <Sparkles className="w-4 h-4" />
-                        Destined Sync Score
+                        {t.destinedScoreTitle}
                       </div>
                       <div className="mt-3 flex items-baseline gap-2">
                         <div className="text-5xl font-black tracking-tight text-rose-900">
@@ -258,9 +242,7 @@ export default function LoveSyncApp() {
                       <div className="mt-3 text-rose-900 font-black text-lg leading-snug">
                         {message}
                       </div>
-                      <div className="mt-4 text-sm text-rose-700">
-                        Getting 100 points is intentionally a bit hard. The distance shrinks as you draw.
-                      </div>
+                      <div className="mt-4 text-sm text-rose-700">{t.scoreNoteLow}</div>
                     </div>
                   </div>
 
@@ -279,10 +261,9 @@ export default function LoveSyncApp() {
         </div>
 
         <footer className="mt-10 text-center text-xs text-rose-700/80">
-          Next.js + Tailwind + Framer Motion (Local Mock) / Drawing runs entirely in your browser
+          {t.localFooter}
         </footer>
       </div>
     </div>
   );
 }
-

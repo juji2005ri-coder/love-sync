@@ -8,6 +8,7 @@ import confetti from "canvas-confetti";
 import HeartCanvas, { type NormalizedPoint } from "@/components/HeartCanvas";
 import HeartComparisonCanvas from "@/components/HeartComparisonCanvas";
 import { heartSimilarity, type SimilarityResult } from "@/lib/heartSimilarity";
+import { translations, type Locale } from "@/lib/i18n";
 import { supabase, getSupabaseConfigMissingReason } from "@/lib/supabase";
 
 type RoomStatus = "waiting_for_1" | "waiting_for_2" | "done";
@@ -32,14 +33,16 @@ function getOrCreateClientId() {
   return id;
 }
 
-function statusText(status: RoomStatus, role: Role) {
-  if (status === "waiting_for_1") return role === "one" ? "Waiting: draw your heart (1st)" : "Waiting: someone will start (1st).";
-  if (status === "waiting_for_2") return role === "two" ? "Waiting: draw your heart (2nd)" : "Waiting: partner draws (2nd).";
-  return "Results are ready.";
+function statusText(status: RoomStatus, role: Role, locale: Locale) {
+  const t = translations[locale];
+  if (status === "waiting_for_1") return role === "one" ? t.waitingYourTurn1 : t.waitingSomeoneStarts;
+  if (status === "waiting_for_2") return role === "two" ? t.waitingYourTurn2 : t.waitingPartner1;
+  return t.resultsReady;
 }
 
-export default function RoomLoveSync({ roomId }: { roomId: string }) {
+export default function RoomLoveSync({ roomId, locale }: { roomId: string; locale: Locale }) {
   const supabaseConfigMissingReason = useMemo(() => getSupabaseConfigMissingReason(), []);
+  const t = translations[locale];
 
   const clientId = useMemo(() => getOrCreateClientId(), []);
 
@@ -288,11 +291,11 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
   const handleCommit1 = async (pts: NormalizedPoint[]) => {
     if (supabaseConfigMissingReason) return;
     if (role !== "one") {
-      addLog("Cannot commit: You are not Player 1.");
+      addLog(t.player1Only);
       return;
     }
     if (status !== "waiting_for_1") {
-      addLog(`Cannot commit: Current status is ${status}.`);
+      addLog(t.cannotCommitStatus(status));
       return;
     }
     setIsWriting(true);
@@ -328,11 +331,11 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
   const handleCommit2 = async (pts: NormalizedPoint[]) => {
     if (supabaseConfigMissingReason) return;
     if (role !== "two") {
-      addLog("Cannot commit: You are not Player 2.");
+      addLog(t.player2Only);
       return;
     }
     if (status !== "waiting_for_2") {
-      addLog(`Cannot commit: Current status is ${status}.`);
+      addLog(t.cannotCommitStatus(status));
       return;
     }
     setIsWriting(true);
@@ -382,7 +385,7 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
         .eq("id", roomId);
       
       if (error) {
-        console.error("Error resetting room:", error);
+        console.error(t.resetRoomError, error);
         return;
       }
 
@@ -401,10 +404,10 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
       <div className="min-h-screen bg-gradient-to-b from-pink-50 via-rose-50 to-purple-50">
         <div className="max-w-3xl mx-auto px-4 py-12">
           <div className="bg-white/80 border border-rose-200 rounded-3xl p-6">
-            <div className="text-lg font-black text-rose-900">Supabase is not configured.</div>
+            <div className="text-lg font-black text-rose-900">{t.supabaseMissing}</div>
             <div className="mt-2 text-sm text-rose-700">{supabaseConfigMissingReason}</div>
             <div className="mt-6 text-xs text-rose-600">
-              Set the required `NEXT_PUBLIC_SUPABASE_*` env vars and restart the dev server.
+              {t.envVarNote}
             </div>
           </div>
         </div>
@@ -417,7 +420,7 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
       <div className="min-h-screen bg-gradient-to-b from-pink-50 via-rose-50 to-purple-50">
         <div className="max-w-3xl mx-auto px-4 py-12">
           <div className="bg-white/80 border border-rose-200 rounded-3xl p-6 text-sm text-rose-800">
-            Connecting to the room...
+            {t.connecting}
           </div>
         </div>
       </div>
@@ -425,7 +428,7 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
   }
 
   const title =
-    role === "one" ? "Draw your heart (1st) on this device" : role === "two" ? "Draw your heart (2nd) on this device" : "Waiting room";
+    role === "one" ? t.drawYourHeart1 : role === "two" ? t.drawYourHeart2 : t.waitingRoom;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 via-rose-50 to-purple-50">
@@ -435,10 +438,10 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
             <Heart className="w-6 h-6 text-rose-500" />
           </div>
           <div>
-            <div className="text-2xl font-black tracking-tight text-rose-900">Love Sync Score (Room)</div>
+            <div className="text-2xl font-black tracking-tight text-rose-900">{t.roomTitle}</div>
             <div className="text-sm text-rose-700 flex items-center gap-2">
               <Users className="w-4 h-4" />
-              room: {roomId}
+              {t.roomLabel} {roomId}
             </div>
           </div>
         </header>
@@ -461,10 +464,10 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                       <button
                         onClick={fetchInitial}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-rose-100 text-rose-700 text-xs font-bold hover:bg-rose-50 transition-colors"
-                        title="Manual Refresh"
+                        title={t.manualRefresh}
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
-                        Refresh
+                        {t.refresh}
                       </button>
                       <button
                         onClick={handleCopyRoomId}
@@ -473,46 +476,48 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                         {copied ? (
                           <>
                             <Check className="w-3.5 h-3.5" />
-                            Copied!
+                            {t.copied}
                           </>
                         ) : (
                           <>
                             <Copy className="w-3.5 h-3.5" />
-                            Copy Room Number
+                            {t.copyRoomNumber}
                           </>
                         )}
                       </button>
                     </div>
                   </div>
-                  <div className="text-sm text-rose-700">{statusText(status, role)}</div>
+                  <div className="text-sm text-rose-700">{statusText(status, role, locale)}</div>
                 </div>
 
                 <div className="mt-6">
                   {role === "one" ? (
                     <HeartCanvas
+                      locale={locale}
                       strokeColor="#ff5fa9"
                       strokeWidth={11}
                       onCommit={handleCommit1}
-                      title="Drawing Canvas"
-                      subtitle={isWriting ? "Saving..." : status === "waiting_for_1" ? "Press Confirm when you are ready" : "Waiting for partner's turn"}
+                      title={t.drawingCanvas}
+                      subtitle={isWriting ? t.saving : status === "waiting_for_1" ? t.pressConfirmToContinue : t.waitingPartner2}
                       disabled={isWriting || status !== "waiting_for_1"}
                     />
                   ) : null}
 
                   {role === "two" ? (
                     <HeartCanvas
+                      locale={locale}
                       strokeColor="#6fd3ff"
                       strokeWidth={11}
                       onCommit={handleCommit2}
-                      title="Drawing Canvas"
-                      subtitle={isWriting ? "Saving..." : status === "waiting_for_2" ? "Press Confirm when you are ready" : "Waiting for previous heart"}
+                      title={t.drawingCanvas}
+                      subtitle={isWriting ? t.saving : status === "waiting_for_2" ? t.pressConfirmToContinue : t.waitingPartner2}
                       disabled={isWriting || status !== "waiting_for_2"}
                     />
                   ) : null}
 
                   {role === "spectator" ? (
                     <div className="rounded-3xl bg-rose-50/60 border border-rose-100 p-6 text-rose-700 text-sm">
-                      You&apos;re here as a spectator. Open the same room URL, and wait until it&apos;s your turn.
+                      {t.spectatorMessage}
                     </div>
                   ) : null}
                 </div>
@@ -528,7 +533,7 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                       }}
                       className="text-[10px] text-rose-400 hover:text-rose-600 underline"
                     >
-                      Debug: Re-claim role
+                      {t.debugReclaim}
                     </button>
                     <button
                       type="button"
@@ -537,14 +542,14 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                       className="h-10 px-3 rounded-2xl bg-white/70 border border-rose-200 text-rose-800 font-semibold hover:bg-white flex items-center gap-2"
                     >
                       <RotateCcw className="w-4 h-4" />
-                      Start over
+                      {t.startOver}
                     </button>
                   </div>
                 ) : null}
 
                 {/* Debug Log Panel */}
                 <div className="mt-8 pt-6 border-t border-rose-100">
-                  <div className="text-[10px] font-bold text-rose-300 uppercase tracking-widest mb-2">Connection Debug</div>
+                  <div className="text-[10px] font-bold text-rose-300 uppercase tracking-widest mb-2">{t.connectionDebug}</div>
                   <div className="bg-rose-50/50 rounded-xl p-3 font-mono text-[10px] text-rose-600 flex flex-col gap-1">
                     <div>Role: {role}</div>
                     <div>Status: {status}</div>
@@ -588,8 +593,8 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
 
                 <div className="flex items-start justify-between gap-4 relative z-10">
                   <div>
-                    <div className="text-sm font-semibold text-rose-800">Sync Result</div>
-                    <div className="text-xs text-rose-600 mt-1">Size and position are ignored. We score shape similarity.</div>
+                    <div className="text-sm font-semibold text-rose-800">{t.syncResultTitle}</div>
+                    <div className="text-xs text-rose-600 mt-1">{t.scoreDetail}</div>
                   </div>
                   <div className="flex gap-2">
                     {role === "one" ? (
@@ -600,7 +605,7 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                         className="h-10 px-3 rounded-2xl bg-white/70 border border-rose-200 text-rose-800 font-semibold hover:bg-white flex items-center gap-2 transition-all active:scale-95"
                       >
                         <RotateCcw className="w-4 h-4" />
-                        Start over
+                        {t.startOver}
                       </button>
                     ) : null}
                   </div>
@@ -616,7 +621,7 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                     >
                       <div className="text-sm font-semibold text-rose-800 flex items-center gap-2">
                         <Sparkles className={`w-4 h-4 ${displayScore >= 70 ? "text-amber-400 animate-pulse" : "text-rose-400"}`} />
-                        Destined Sync Score
+                        {t.destinedScoreTitle}
                       </div>
                       <div className="mt-3 flex items-baseline gap-2">
                         <motion.div 
@@ -640,18 +645,10 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
                         transition={{ delay: 0.6 }}
                         className="mt-4 text-rose-900 font-black text-xl leading-snug"
                       >
-                        {(() => {
-                          const s = result.score;
-                          if (s >= 95) return "True Soulmates! 💖 Your hearts are one.";
-                          if (s >= 85) return "Perfect Match! ✨ Almost identical sync.";
-                          if (s >= 70) return "Destined Couple! 💕 Deep connection found.";
-                          if (s >= 50) return "Great Harmony! 🌸 A beautiful match.";
-                          if (s >= 30) return "Warm Connection 💝 Good start together.";
-                          return "Sync Experiment Start! 🍬 Draw with more love.";
-                        })()}
+                        {translations[locale].scoreMessage(result.score)}
                       </motion.div>
                       <div className="mt-5 text-xs text-rose-500 font-medium italic">
-                        {displayScore >= 90 ? "You two are legendary!" : "Getting 100 points is intentionally a bit hard."}
+                        {displayScore >= 90 ? t.scoreNote : t.scoreNoteLow}
                       </div>
                     </motion.div>
                   </div>
@@ -679,4 +676,3 @@ export default function RoomLoveSync({ roomId }: { roomId: string }) {
     </div>
   );
 }
-
