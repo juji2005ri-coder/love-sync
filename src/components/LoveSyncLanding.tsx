@@ -50,7 +50,7 @@ export default function LoveSyncLanding() {
 
       if (error) {
         console.error("Error creating room:", error);
-        alert("Failed to create room. Please try again.");
+        alert(t.createRoomFailed);
         return;
       }
 
@@ -225,4 +225,3 @@ export default function LoveSyncLanding() {
     </div>
   );
 }
-

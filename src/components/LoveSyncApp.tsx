@@ -261,10 +261,9 @@ export default function LoveSyncApp({ locale }: { locale: Locale }) {
         </div>
 
         <footer className="mt-10 text-center text-xs text-rose-700/80">
-          {locale === "ja" ? "Next.js + Tailwind + Framer Motion (ローカル モック) / 描画はブラウザ内で完結" : "Next.js + Tailwind + Framer Motion (Local Mock) / Drawing runs entirely in your browser"}
+          {t.localFooter}
         </footer>
       </div>
     </div>
   );
 }
-

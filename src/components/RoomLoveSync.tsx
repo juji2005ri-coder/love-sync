@@ -291,11 +291,11 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
   const handleCommit1 = async (pts: NormalizedPoint[]) => {
     if (supabaseConfigMissingReason) return;
     if (role !== "one") {
-      addLog("Cannot commit: You are not Player 1.");
+      addLog(t.player1Only);
       return;
     }
     if (status !== "waiting_for_1") {
-      addLog(`Cannot commit: Current status is ${status}.`);
+      addLog(t.cannotCommitStatus(status));
       return;
     }
     setIsWriting(true);
@@ -331,11 +331,11 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
   const handleCommit2 = async (pts: NormalizedPoint[]) => {
     if (supabaseConfigMissingReason) return;
     if (role !== "two") {
-      addLog("Cannot commit: You are not Player 2.");
+      addLog(t.player2Only);
       return;
     }
     if (status !== "waiting_for_2") {
-      addLog(`Cannot commit: Current status is ${status}.`);
+      addLog(t.cannotCommitStatus(status));
       return;
     }
     setIsWriting(true);
@@ -385,7 +385,7 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
         .eq("id", roomId);
       
       if (error) {
-        console.error("Error resetting room:", error);
+        console.error(t.resetRoomError, error);
         return;
       }
 
@@ -407,7 +407,7 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
             <div className="text-lg font-black text-rose-900">{t.supabaseMissing}</div>
             <div className="mt-2 text-sm text-rose-700">{supabaseConfigMissingReason}</div>
             <div className="mt-6 text-xs text-rose-600">
-              {locale === "ja" ? "必要な `NEXT_PUBLIC_SUPABASE_*` 環境変数を設定して、開発サーバーを再起動してください。" : "Set the required `NEXT_PUBLIC_SUPABASE_*` env vars and restart the dev server."}
+              {t.envVarNote}
             </div>
           </div>
         </div>
@@ -676,4 +676,3 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
     </div>
   );
 }
-
