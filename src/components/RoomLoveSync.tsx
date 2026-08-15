@@ -7,8 +7,9 @@ import confetti from "canvas-confetti";
 
 import HeartCanvas, { type NormalizedPoint } from "@/components/HeartCanvas";
 import HeartComparisonCanvas from "@/components/HeartComparisonCanvas";
+import DateRouletteExperience from "@/components/DateRouletteExperience";
 import { heartSimilarity, type SimilarityResult } from "@/lib/heartSimilarity";
-import { translations, type Locale } from "@/lib/i18n";
+import { defaultLocale, translations, type Locale } from "@/lib/i18n";
 import { supabase, getSupabaseConfigMissingReason } from "@/lib/supabase";
 
 type RoomStatus = "waiting_for_1" | "waiting_for_2" | "done";
@@ -33,6 +34,10 @@ function getOrCreateClientId() {
   return id;
 }
 
+function getErrorMessage(err: unknown) {
+  return err instanceof Error ? err.message : "unknown";
+}
+
 function statusText(status: RoomStatus, role: Role, locale: Locale) {
   const t = translations[locale];
   if (status === "waiting_for_1") return role === "one" ? t.waitingYourTurn1 : t.waitingSomeoneStarts;
@@ -40,7 +45,7 @@ function statusText(status: RoomStatus, role: Role, locale: Locale) {
   return t.resultsReady;
 }
 
-export default function RoomLoveSync({ roomId, locale }: { roomId: string; locale: Locale }) {
+export default function RoomLoveSync({ roomId, locale = defaultLocale }: { roomId: string; locale?: Locale }) {
   const supabaseConfigMissingReason = useMemo(() => getSupabaseConfigMissingReason(), []);
   const t = translations[locale];
 
@@ -255,7 +260,7 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
 
         const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
 
-        const interval: any = setInterval(function() {
+        const interval: ReturnType<typeof setInterval> = setInterval(function() {
           const timeLeft = animationEnd - Date.now();
 
           if (timeLeft <= 0) {
@@ -321,8 +326,8 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
         // Important: Immediately refetch to update local state and 'status'
         await fetchInitial();
       }
-    } catch (err: any) {
-      addLog(`Unexpected error: ${err?.message || "unknown"}`);
+    } catch (err: unknown) {
+      addLog(`Unexpected error: ${getErrorMessage(err)}`);
     } finally {
       setIsWriting(false);
     }
@@ -359,8 +364,8 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
         // Immediate refetch to ensure local state is updated instantly
         await fetchInitial();
       }
-    } catch (err: any) {
-      addLog(`Unexpected error: ${err?.message || "unknown"}`);
+    } catch (err: unknown) {
+      addLog(`Unexpected error: ${getErrorMessage(err)}`);
     } finally {
       setIsWriting(false);
     }
@@ -668,6 +673,12 @@ export default function RoomLoveSync({ roomId, locale }: { roomId: string; local
                     </motion.div>
                   </div>
                 </div>
+
+                <DateRouletteExperience
+                  key={`${result.score}-${result.distance}-${result.alignment.rotationAngle}`}
+                  score={result.score}
+                  locale={locale}
+                />
               </motion.div>
             ) : null}
           </AnimatePresence>

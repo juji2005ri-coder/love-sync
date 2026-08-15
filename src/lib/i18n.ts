@@ -115,6 +115,129 @@ export const translations = {
     player2Only: "Cannot commit: You are not Player 2.",
     cannotCommitStatus: (status: string) => `Cannot commit: Current status is ${status}.`,
     resetRoomError: "Failed to reset room. Please try again.",
+    dateRoulette: {
+      matchLabel: "Match",
+      matchSupportLow: "This is kind of wild...",
+      matchSupportMid: "This could get interesting.",
+      matchSupportHigh: "Whoa... your chemistry is glowing.",
+      suspenseLabel: "Next up",
+      decidesNextDate: "This decides your next date...",
+      fateIs: "Your fate is...",
+      rouletteLabel: "Date Roulette",
+      spinning: "Spinning...",
+      resultReady: "Locked in.",
+      yourDateChallenge: "Your Date Challenge",
+      reactionWindow: "Take it in for a second... and react 💞",
+      rangeLabel: {
+        "0-20": "Range: 0-20%",
+        "21-40": "Range: 21-40%",
+        "41-60": "Range: 41-60%",
+        "61-80": "Range: 61-80%",
+        "81-100": "Range: 81-100%",
+      },
+      challenges: {
+        silent_date: {
+          title: "Silent Date",
+          description: "No talking during the date.",
+        },
+        three_dislikes: {
+          title: "3 Things You Dislike",
+          description: "Tell each other three things you dislike.",
+        },
+        five_loves: {
+          title: "5 Things You Love",
+          description: "Name five things you love about your partner.",
+        },
+        phone_swap: {
+          title: "Phone Swap",
+          description: "Swap phones during the date.",
+        },
+        talk_about_exes: {
+          title: "Talk About Your Exes",
+          description: "Have an honest conversation about your exes.",
+        },
+        first_date_roleplay: {
+          title: "First Date Roleplay",
+          description: "Pretend you just met for the first time.",
+        },
+        formal_language_only: {
+          title: "Formal Language Only",
+          description: "Speak formally to each other throughout the date.",
+        },
+        compliment_challenge: {
+          title: "Compliment Challenge",
+          description: "Keep complimenting each other all date.",
+        },
+        recreate_ideal_date: {
+          title: "Recreate Your Ideal Date",
+          description: "Recreate your partner's ideal date.",
+        },
+        no_holding_hands: {
+          title: "No Holding Hands",
+          description: "No holding hands during the date.",
+        },
+        dream_date_pitch: {
+          title: "Dream Date Pitch",
+          description: "Pitch dream dates. Winner picks where you go.",
+        },
+        budget_date: {
+          title: "Budget Date",
+          description: "Go on a date with a limited budget.",
+        },
+        surprise_challenge: {
+          title: "Surprise Challenge",
+          description: "Come up with on-the-spot surprises for each other.",
+        },
+        make_partner_happy: {
+          title: "Make Your Partner Happy",
+          description: "You have one hour to make your partner as happy as possible.",
+        },
+        make_them_laugh: {
+          title: "Make Them Laugh",
+          description: "Try to make your partner laugh as many times as possible.",
+        },
+        buy_matching_items: {
+          title: "Buy Matching Items",
+          description: "Buy matching items for each other.",
+        },
+        staring_contest: {
+          title: "Staring Contest",
+          description: "Keep eye contact. First to look away loses.",
+        },
+        pick_for_partner: {
+          title: "Pick Something for Your Partner",
+          description: "Choose something that suits your partner and exchange picks.",
+        },
+        love_you_game: {
+          title: "\"I Love You\" Game",
+          description: "Take turns saying \"I love you.\" Laughing or looking away loses.",
+        },
+        butler_princess_date: {
+          title: "Butler & Princess Date",
+          description: "One is the butler, one is the princess for the date.",
+        },
+        honest_relationship_talk: {
+          title: "Honest Relationship Talk",
+          description: "Talk honestly about something you usually avoid.",
+        },
+        grant_partner_wishes: {
+          title: "Grant Your Partner's Wishes",
+          description: "Try to grant your partner's wishes for one day.",
+        },
+        fancy_date: {
+          title: "Fancy Date",
+          description: "Go on a special, dressed-up date.",
+        },
+        love_letter_exchange: {
+          title: "Love Letter Exchange",
+          description: "Write and read love letters to each other.",
+        },
+        partner_first_day: {
+          title: "Partner-First Day",
+          description: "Put your partner first and minimize distractions for one day.",
+        },
+      },
+    },
   },
   ja: {
     language: "言語",
@@ -206,6 +329,129 @@ export const translations = {
     player2Only: "確定できません: あなたは2人目ではありません。",
     cannotCommitStatus: (status: string) => `確定できません: 現在の状態は ${status} です。`,
     resetRoomError: "ルームのリセットに失敗しました。もう一度お試しください。",
+    dateRoulette: {
+      matchLabel: "MATCH",
+      matchSupportLow: "ちょっと波乱の予感かも…",
+      matchSupportMid: "これは盛り上がりそう。",
+      matchSupportHigh: "すごい…相性がかなりいいかも。",
+      suspenseLabel: "次は",
+      decidesNextDate: "次のデートはこれで決まります…",
+      fateIs: "あなたたちの運命は…",
+      rouletteLabel: "デートルーレット",
+      spinning: "ルーレット回転中…",
+      resultReady: "結果が決まりました。",
+      yourDateChallenge: "YOUR DATE CHALLENGE",
+      reactionWindow: "2人でリアクションする時間です 💞",
+      rangeLabel: {
+        "0-20": "対象レンジ: 0-20%",
+        "21-40": "対象レンジ: 21-40%",
+        "41-60": "対象レンジ: 41-60%",
+        "61-80": "対象レンジ: 61-80%",
+        "81-100": "対象レンジ: 81-100%",
+      },
+      challenges: {
+        silent_date: {
+          title: "サイレントデート",
+          description: "デート中は会話なしで過ごす。",
+        },
+        three_dislikes: {
+          title: "苦手なところ3つ",
+          description: "お互いに苦手なところを3つ伝える。",
+        },
+        five_loves: {
+          title: "好きなところ5つ",
+          description: "相手の好きなところを5つ伝える。",
+        },
+        phone_swap: {
+          title: "スマホ交換デート",
+          description: "デート中にスマホを交換して過ごす。",
+        },
+        talk_about_exes: {
+          title: "元恋人トーク",
+          description: "元恋人について正直に話し合う。",
+        },
+        first_date_roleplay: {
+          title: "初対面ロールプレイ",
+          description: "初めて会った設定でデートする。",
+        },
+        formal_language_only: {
+          title: "敬語オンリーデート",
+          description: "デート中はずっと敬語で話す。",
+        },
+        compliment_challenge: {
+          title: "褒めチャレンジ",
+          description: "お互いをたくさん褒め続ける。",
+        },
+        recreate_ideal_date: {
+          title: "理想デート再現",
+          description: "相手の理想デートを再現する。",
+        },
+        no_holding_hands: {
+          title: "手つなぎ禁止",
+          description: "デート中は手をつながない。",
+        },
+        dream_date_pitch: {
+          title: "理想デートプレゼン",
+          description: "理想のデートを発表し、勝った方が行き先を決める。",
+        },
+        budget_date: {
+          title: "予算しばりデート",
+          description: "限られた予算でデートを楽しむ。",
+        },
+        surprise_challenge: {
+          title: "即興サプライズ",
+          description: "その場で相手へのサプライズを考える。",
+        },
+        make_partner_happy: {
+          title: "1時間で幸せにする",
+          description: "1時間で相手をできるだけ幸せにする。",
+        },
+        make_them_laugh: {
+          title: "笑わせチャレンジ",
+          description: "デート中に何回笑わせられるか挑戦する。",
+        },
+        buy_matching_items: {
+          title: "おそろいアイテム購入",
+          description: "お互いにおそろいの物を買う。",
+        },
+        staring_contest: {
+          title: "見つめ合い対決",
+          description: "先に目をそらした方が負け。",
+        },
+        pick_for_partner: {
+          title: "似合うもの選び",
+          description: "相手に似合うと思うものを選んで交換する。",
+        },
+        love_you_game: {
+          title: "「好き」ゲーム",
+          description: "交互に「好き」と言う。照れたり笑ったら負け。",
+        },
+        butler_princess_date: {
+          title: "執事＆お姫さまデート",
+          description: "1人は執事、もう1人はお姫さまで過ごす。",
+        },
+        honest_relationship_talk: {
+          title: "本音トーク",
+          description: "普段話さないことを正直に話す。",
+        },
+        grant_partner_wishes: {
+          title: "お願い叶えるデー",
+          description: "1日だけ相手のお願いをできるだけ叶える。",
+        },
+        fancy_date: {
+          title: "ごほうびデート",
+          description: "少し特別な、おしゃれデートに行く。",
+        },
+        love_letter_exchange: {
+          title: "ラブレター交換",
+          description: "手紙を書いて読み合う。",
+        },
+        partner_first_day: {
+          title: "相手優先デー",
+          description: "1日、相手を最優先してスマホなどの邪魔を減らす。",
+        },
+      },
+    },
   },
   ko: {
     language: "언어",
@@ -297,5 +543,128 @@ export const translations = {
     player2Only: "확인할 수 없습니다: 당신은 2번째 플레이어가 아닙니다.",
     cannotCommitStatus: (status: string) => `확인할 수 없습니다: 현재 상태는 ${status} 입니다.`,
     resetRoomError: "방 초기화에 실패했습니다. 다시 시도해 주세요.",
+    dateRoulette: {
+      matchLabel: "MATCH",
+      matchSupportLow: "오... 꽤 드라마틱한데요?",
+      matchSupportMid: "재밌는 결과가 나올 것 같아요.",
+      matchSupportHigh: "와... 두 사람 케미가 정말 좋네요.",
+      suspenseLabel: "다음은",
+      decidesNextDate: "다음 데이트는 이걸로 결정됩니다…",
+      fateIs: "두 사람의 운명은…",
+      rouletteLabel: "데이트 룰렛",
+      spinning: "룰렛 회전 중…",
+      resultReady: "결과가 정해졌어요.",
+      yourDateChallenge: "YOUR DATE CHALLENGE",
+      reactionWindow: "잠깐, 서로의 리액션을 즐겨보세요 💞",
+      rangeLabel: {
+        "0-20": "점수 구간: 0-20%",
+        "21-40": "점수 구간: 21-40%",
+        "41-60": "점수 구간: 41-60%",
+        "61-80": "점수 구간: 61-80%",
+        "81-100": "점수 구간: 81-100%",
+      },
+      challenges: {
+        silent_date: {
+          title: "사일런트 데이트",
+          description: "데이트 중에는 말하지 않기.",
+        },
+        three_dislikes: {
+          title: "서로 아쉬운 점 3가지",
+          description: "서로에게 아쉬운 점 3가지를 솔직하게 말하기.",
+        },
+        five_loves: {
+          title: "좋아하는 점 5가지",
+          description: "상대의 좋은 점 5가지를 말해주기.",
+        },
+        phone_swap: {
+          title: "폰 바꿔 쓰기",
+          description: "데이트 중 서로의 폰을 바꿔서 사용하기.",
+        },
+        talk_about_exes: {
+          title: "전 애인 이야기",
+          description: "전 애인에 대해 솔직하게 대화하기.",
+        },
+        first_date_roleplay: {
+          title: "첫 만남 롤플레이",
+          description: "처음 만난 사이인 것처럼 데이트하기.",
+        },
+        formal_language_only: {
+          title: "존댓말 데이트",
+          description: "데이트 내내 서로 존댓말만 사용하기.",
+        },
+        compliment_challenge: {
+          title: "칭찬 챌린지",
+          description: "서로를 계속 칭찬하면서 데이트하기.",
+        },
+        recreate_ideal_date: {
+          title: "이상형 데이트 재현",
+          description: "상대가 꿈꾸는 데이트를 재현해보기.",
+        },
+        no_holding_hands: {
+          title: "손잡기 금지",
+          description: "데이트 중 손잡기 금지.",
+        },
+        dream_date_pitch: {
+          title: "드림 데이트 발표",
+          description: "각자 꿈의 데이트를 발표하고, 승자가 장소를 정하기.",
+        },
+        budget_date: {
+          title: "예산 데이트",
+          description: "정해진 예산 안에서 데이트하기.",
+        },
+        surprise_challenge: {
+          title: "즉흥 서프라이즈",
+          description: "그 자리에서 서로를 위한 서프라이즈를 준비하기.",
+        },
+        make_partner_happy: {
+          title: "한 시간 행복 미션",
+          description: "한 시간 안에 상대를 최대한 행복하게 만들기.",
+        },
+        make_them_laugh: {
+          title: "웃음 유발 챌린지",
+          description: "데이트 중 상대를 많이 웃게 만들기.",
+        },
+        buy_matching_items: {
+          title: "커플 아이템 사기",
+          description: "서로 맞춰 쓸 아이템을 사기.",
+        },
+        staring_contest: {
+          title: "눈싸움",
+          description: "먼저 시선을 피하는 사람이 지기.",
+        },
+        pick_for_partner: {
+          title: "서로 어울리는 것 고르기",
+          description: "상대에게 어울릴 것 같은 걸 골라 교환하기.",
+        },
+        love_you_game: {
+          title: "\"사랑해\" 게임",
+          description: "번갈아 \"사랑해\" 말하기. 웃거나 시선 피하면 패배.",
+        },
+        butler_princess_date: {
+          title: "집사 & 공주 데이트",
+          description: "한 명은 집사, 한 명은 공주 역할로 데이트하기.",
+        },
+        honest_relationship_talk: {
+          title: "진심 대화",
+          description: "평소 잘 말하지 않던 주제로 솔직하게 이야기하기.",
+        },
+        grant_partner_wishes: {
+          title: "소원 들어주기 데이",
+          description: "하루 동안 상대의 소원을 최대한 들어주기.",
+        },
+        fancy_date: {
+          title: "스페셜 데이트",
+          description: "조금 더 특별하고 분위기 있는 데이트 즐기기.",
+        },
+        love_letter_exchange: {
+          title: "러브레터 교환",
+          description: "서로에게 편지를 써서 읽어주기.",
+        },
+        partner_first_day: {
+          title: "상대 우선 데이",
+          description: "하루 동안 상대를 최우선으로 두고 방해 요소를 줄이기.",
+        },
+      },
+    },
   },
 } as const;

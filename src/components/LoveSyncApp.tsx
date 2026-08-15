@@ -6,6 +6,7 @@ import { Heart, Sparkles, Users, RotateCcw } from "lucide-react";
 
 import HeartCanvas, { type NormalizedPoint } from "@/components/HeartCanvas";
 import HeartComparisonCanvas from "@/components/HeartComparisonCanvas";
+import DateRouletteExperience from "@/components/DateRouletteExperience";
 import { heartSimilarity, type SimilarityResult } from "@/lib/heartSimilarity";
 import { translations, type Locale } from "@/lib/i18n";
 
@@ -35,7 +36,7 @@ export default function LoveSyncApp({ locale }: { locale: Locale }) {
   useEffect(() => {
     if (!result) return;
     let finished = false;
-    const controls = animate(displayScore, result.score, {
+    const controls = animate(0, result.score, {
       duration: 140,
       ease: "linear",
       onUpdate: (v) => {
@@ -255,6 +256,12 @@ export default function LoveSyncApp({ locale }: { locale: Locale }) {
                     />
                   </div>
                 </div>
+
+                <DateRouletteExperience
+                  key={`${result.score}-${result.distance}-${result.alignment.rotationAngle}`}
+                  score={result.score}
+                  locale={locale}
+                />
               </motion.div>
             ) : null}
           </AnimatePresence>
